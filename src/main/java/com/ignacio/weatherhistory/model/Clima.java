@@ -20,8 +20,12 @@ public class Clima {
     private Double velocidadViento;
     private LocalDateTime fechaConsulta;
 
-    public Clima(){
-
+    public Clima(String ciudad, Double latitud, Double longitud, Double temperatura, Double velocidadViento){
+        this.ciudad= ciudad;
+        this.latitud= latitud;
+        this.longitud=longitud;
+        this.temperatura=temperatura;
+        this.velocidadViento=velocidadViento;
     }
 
     public Long getId() {
