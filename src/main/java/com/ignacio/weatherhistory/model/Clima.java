@@ -26,6 +26,11 @@ public class Clima {
         this.longitud=longitud;
         this.temperatura=temperatura;
         this.velocidadViento=velocidadViento;
+        this.fechaConsulta= LocalDateTime.now();
+    }
+
+    public Clima() {
+
     }
 
     public Long getId() {

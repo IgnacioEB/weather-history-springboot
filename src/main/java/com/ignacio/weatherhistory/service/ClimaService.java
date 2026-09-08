@@ -50,7 +50,9 @@ public class ClimaService {
                 lon,
                 forecast.getCurrent().getTemperatura(),
                 forecast.getCurrent().getVelocidadViento()
+
         );
+
 
         return climaRepository.save(clima);
     }
