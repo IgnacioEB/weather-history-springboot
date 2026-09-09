@@ -33,11 +33,8 @@ public class ClimaService {
         }
 
         GeocodingResponse.Resultado resultado = geo.getResults().get(0);
-        Double lat = resultado.getLatitude();
-        Double lon = resultado.getLongitude();
-
         // Paso 2: forecast — coordenadas → clima actual
-        ForecastResponse forecast = restTemplate.getForObject(FORECAST_URL, ForecastResponse.class, lat, lon);
+        ForecastResponse forecast = restTemplate.getForObject(FORECAST_URL, ForecastResponse.class, resultado.getLatitude(), resultado.getLongitude());
 
         if (forecast == null || forecast.getCurrent() == null) {
             throw new RuntimeException("No se pudo obtener el clima para: " + nombreCiudad);
@@ -46,8 +43,8 @@ public class ClimaService {
         // Paso 3: armar y guardar
         Clima clima = new Clima(
                 resultado.getName(),
-                lat,
-                lon,
+                resultado.getLatitude(),
+                resultado.getLongitude(),
                 forecast.getCurrent().getTemperatura(),
                 forecast.getCurrent().getVelocidadViento()
 
