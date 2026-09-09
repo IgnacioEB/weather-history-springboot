@@ -23,6 +23,9 @@ public class ForecastResponse {
         @JsonProperty("wind_speed_10m")
         private Double velocidadViento;
 
+        @JsonProperty("relative_humidity_2m")
+        private int humedad;
+
 
         public Double getTemperatura() {
             return temperatura;
@@ -38,6 +41,13 @@ public class ForecastResponse {
 
         public void setVelocidadViento(Double velocidadViento) {
             this.velocidadViento = velocidadViento;
+        }
+
+        public int getHumedad(){
+            return this.humedad;
+        }
+        public void setHumedad(int humedad){
+            this.humedad=humedad;
         }
     }
 }
