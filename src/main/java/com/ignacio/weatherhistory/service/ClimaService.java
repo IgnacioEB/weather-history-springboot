@@ -18,7 +18,7 @@ public class ClimaService {
     private final ClimaRepository climaRepository;
 
     private static final String GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search?name={ciudad}&count=1";
-    private static final String FORECAST_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m,relative_humidity_2m";
+    private static final String FORECAST_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,wind_direction_10m,apparent_temperature,cloud_cover";
 
     public ClimaService(RestTemplate restTemplate, ClimaRepository climaRepository) {
         this.restTemplate = restTemplate;
@@ -48,8 +48,10 @@ public class ClimaService {
                 resultado.getLongitude(),
                 forecast.getCurrent().getTemperatura(),
                 forecast.getCurrent().getVelocidadViento(),
-                forecast.getCurrent().getHumedad()
-
+                forecast.getCurrent().getHumedad(),
+                forecast.getCurrent().getDireccionViento(),
+                forecast.getCurrent().getSensacionTermica(),
+                forecast.getCurrent().getCoberturaNubes()
         );
 
 

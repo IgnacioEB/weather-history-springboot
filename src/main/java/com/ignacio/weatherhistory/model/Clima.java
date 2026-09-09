@@ -19,10 +19,12 @@ public class Clima {
     private Double temperatura;
     private Double velocidadViento;
     private LocalDateTime fechaConsulta;
-    @Column(name="humedad",nullable = true)
-    private int humedad;
+    private Integer humedad;
+    private String direccionViento;
+    private Double sensacionTermica;
+    private int coberturaNubes;
 
-    public Clima(String ciudad, Double latitud, Double longitud, Double temperatura, Double velocidadViento, int humedad){
+    public Clima(String ciudad, Double latitud, Double longitud, Double temperatura, Double velocidadViento, Integer humedad, String direccionViento, Double sensacionTermica, Integer coberturaNubes){
         this.ciudad= ciudad;
         this.latitud= latitud;
         this.longitud=longitud;
@@ -30,6 +32,10 @@ public class Clima {
         this.velocidadViento=velocidadViento;
         this.fechaConsulta= LocalDateTime.now();
         this.humedad=humedad;
+        this.direccionViento= direccionViento;
+        this.sensacionTermica= sensacionTermica;
+        this.coberturaNubes=coberturaNubes;
+
     }
 
     public Clima() {
@@ -66,5 +72,18 @@ public class Clima {
 
     public int getHumedad() {
         return humedad;
+    }
+
+
+    public String getDireccionViento() {
+        return direccionViento;
+    }
+
+    public Double getSensacionTermica() {
+        return sensacionTermica;
+    }
+
+    public int getCoberturaNubes() {
+        return coberturaNubes;
     }
 }
