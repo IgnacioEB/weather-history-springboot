@@ -8,6 +8,7 @@ import com.ignacio.weatherhistory.repository.ClimaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -58,4 +59,14 @@ public class ClimaService {
     public List<Clima> obtenerHistorial(String ciudad) {
         return climaRepository.findByCiudadOrderByFechaConsultaDesc(ciudad);
     }
+
+    public Double obtenerTemperaturaPromedio(String ciudad, int dias){
+        LocalDateTime desde= LocalDateTime.now().minusDays(dias);
+        Double promedio= climaRepository.ObtenerTemperaturaPromedio(ciudad, desde);
+        if(promedio==null){
+            throw new CiudadNoEncontradaException("No hay datos de "+ciudad+" en los ultimos "+ dias+ "dias");
+        }
+        return promedio;
+    }
+
 }

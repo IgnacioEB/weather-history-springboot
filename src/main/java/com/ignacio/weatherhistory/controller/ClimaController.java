@@ -28,4 +28,12 @@ public class ClimaController {
     public ResponseEntity<List<Clima>> historial(@RequestParam String ciudad) {
         return ResponseEntity.ok(climaService.obtenerHistorial(ciudad));
     }
+
+
+    @GetMapping("/promedio")
+    public ResponseEntity<Double> promedio(@RequestParam String ciudad, @RequestParam(defaultValue="7") int dias){
+        return ResponseEntity.ok(climaService.obtenerTemperaturaPromedio(ciudad, dias));
+    }
+
+
 }
