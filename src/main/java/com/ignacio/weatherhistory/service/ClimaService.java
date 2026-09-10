@@ -71,4 +71,22 @@ public class ClimaService {
         return promedio;
     }
 
+    public Clima climaMayorTemperatura(String ciudad) {
+        Clima resultado;
+        if(ciudad==null){
+            resultado= climaRepository.findTopByOrderByTemperaturaDesc();
+        }
+        else{
+            resultado= climaRepository.findTopByCiudadOrderByTemperaturaDesc(ciudad);
+        }
+        if(resultado==null){
+            if(ciudad==null){
+                throw new CiudadNoEncontradaException("Todavia no hay datos de ninguna ciudad");
+            }
+            else{
+                throw new CiudadNoEncontradaException("No hay datos de la ciudad "+ciudad);
+            }
+        }
+        return resultado;
+    }
 }

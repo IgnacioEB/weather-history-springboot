@@ -35,5 +35,8 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.obtenerTemperaturaPromedio(ciudad, dias));
     }
 
-
+    @GetMapping("/maxima")
+    public ResponseEntity<Clima> maxima(@RequestParam(required = false)String ciudad){
+        return ResponseEntity.ok(climaService.climaMayorTemperatura(ciudad));
+    }
 }

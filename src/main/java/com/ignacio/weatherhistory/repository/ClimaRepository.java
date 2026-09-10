@@ -15,4 +15,7 @@ public interface ClimaRepository extends JpaRepository<Clima, Long> {
 
     @Query("SELECT AVG(c.temperatura) FROM Clima c WHERE c.ciudad= :ciudad AND c.fechaConsulta>=:desde")
     Double ObtenerTemperaturaPromedio(@Param("ciudad")String ciudad,@Param("desde") LocalDateTime desde);
+
+    Clima findTopByOrderByTemperaturaDesc();
+    Clima findTopByCiudadOrderByTemperaturaDesc(String ciudad);
 }
