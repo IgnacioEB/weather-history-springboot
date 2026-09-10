@@ -99,4 +99,9 @@ public class ClimaService {
         return resultado;
     }
 
+    public List<String> obtenerCiudades(){
+        return climaRepository.obtenerCiudades();
+    }
+
+
 }
