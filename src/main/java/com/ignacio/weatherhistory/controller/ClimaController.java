@@ -39,4 +39,10 @@ public class ClimaController {
     public ResponseEntity<Clima> maxima(@RequestParam(required = false)String ciudad){
         return ResponseEntity.ok(climaService.climaMayorTemperatura(ciudad));
     }
+
+    @GetMapping("/minima")
+    public ResponseEntity<Clima> minima(@RequestParam(required = false)String ciudad){
+        return ResponseEntity.ok(climaService.climaMenorTemperatura(ciudad));
+    }
+
 }

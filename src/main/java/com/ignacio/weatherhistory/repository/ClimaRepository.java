@@ -18,4 +18,6 @@ public interface ClimaRepository extends JpaRepository<Clima, Long> {
 
     Clima findTopByOrderByTemperaturaDesc();
     Clima findTopByCiudadOrderByTemperaturaDesc(String ciudad);
+    Clima findTopByOrderByTemperaturaAsc();
+    Clima findTopByCiudadOrderByTemperaturaAsc(String ciudad);
 }

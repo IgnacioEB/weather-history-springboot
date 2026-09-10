@@ -81,12 +81,22 @@ public class ClimaService {
         }
         if(resultado==null){
             if(ciudad==null){
-                throw new CiudadNoEncontradaException("Todavia no hay datos de ninguna ciudad");
+                throw new CiudadNoEncontradaException("Todavia no hay datos de ninguna ciudad.");
             }
             else{
-                throw new CiudadNoEncontradaException("No hay datos de la ciudad "+ciudad);
+                throw new CiudadNoEncontradaException("No hay datos de la ciudad "+ciudad+ ".");
             }
         }
         return resultado;
     }
+    //metodo hecho de una forma alternativa, usando el operador ternario.
+    public Clima climaMenorTemperatura(String ciudad){
+        Clima resultado=(ciudad == null ? climaRepository.findTopByOrderByTemperaturaAsc() : climaRepository.findTopByCiudadOrderByTemperaturaAsc(ciudad));
+        if(resultado==null){
+            String message=(ciudad == null ? "Todavia no hay datos de ninguna ciudad." : "No hay datos de la ciudad"+ ciudad );
+            throw new CiudadNoEncontradaException(message);
+        }
+        return resultado;
+    }
+
 }
