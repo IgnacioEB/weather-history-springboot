@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 //java persistence api repository
 public interface ClimaRepository extends JpaRepository<Clima, Long> {
@@ -21,5 +22,5 @@ public interface ClimaRepository extends JpaRepository<Clima, Long> {
     Clima findTopByOrderByTemperaturaAsc();
     Clima findTopByCiudadOrderByTemperaturaAsc(String ciudad);
     @Query("select c.ciudad FROM Clima c")
-    List<String> obtenerCiudades();
+    HashSet<String> obtenerCiudades();
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.HashSet;
 
 @RestController
 @RequestMapping("/clima")
@@ -46,7 +47,7 @@ public class ClimaController {
     }
 
     @GetMapping("ciudades_registradas")
-    public ResponseEntity<List<String>> ciudades(){
+    public ResponseEntity<HashSet<String>> ciudades(){
         return ResponseEntity.ok(climaService.obtenerCiudades());
     }
 

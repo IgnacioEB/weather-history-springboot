@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -99,7 +100,7 @@ public class ClimaService {
         return resultado;
     }
 
-    public List<String> obtenerCiudades(){
+    public HashSet<String> obtenerCiudades(){
         return climaRepository.obtenerCiudades();
     }
 
