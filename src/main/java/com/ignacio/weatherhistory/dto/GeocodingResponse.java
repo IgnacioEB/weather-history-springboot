@@ -16,6 +16,7 @@ public class GeocodingResponse {
         private Double latitude;
         private Double longitude;
         private String country;
+        private String admin1;
 
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
@@ -25,5 +26,13 @@ public class GeocodingResponse {
         public void setLongitude(Double longitude) { this.longitude = longitude; }
         public String getCountry() { return country; }
         public void setCountry(String country) { this.country = country; }
+
+        public String getAdmin1() {
+            return admin1;
+        }
+
+        public void setAdmin1(String province) {
+            this.admin1 = province;
+        }
     }
 }

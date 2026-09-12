@@ -18,7 +18,7 @@ public class ClimaService {
     private final RestTemplate restTemplate;
     private final ClimaRepository climaRepository;
 
-    private static final String GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search?name={ciudad}&count=1";
+    private static final String GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search?name={ciudad},{provincia}&countryCode={pais}&count=1";
     private static final String FORECAST_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,wind_direction_10m,apparent_temperature,cloud_cover";
 
     public ClimaService(RestTemplate restTemplate, ClimaRepository climaRepository) {
@@ -26,25 +26,80 @@ public class ClimaService {
         this.climaRepository = climaRepository;
     }
 
-    public Clima consultarClima(String nombreCiudad) {
-        // Paso 1: geocoding — nombre de ciudad → coordenadas
-        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, nombreCiudad);
+    public GeocodingResponse.Resultado subConsultaClimaPorCiudad(String ciudad){
+        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, ciudad);
 
         if (geo == null || geo.getResults() == null || geo.getResults().isEmpty()) {
-            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + nombreCiudad);
+            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + ciudad);
         }
 
         GeocodingResponse.Resultado resultado = geo.getResults().get(0);
-        // Paso 2: forecast — coordenadas → clima actual
+        return resultado;
+    }
+
+    public GeocodingResponse.Resultado subConsultaPorCiudadYprovincia(String ciudad, String provincia){
+        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, ciudad, provincia);
+
+        if (geo == null || geo.getResults() == null || geo.getResults().isEmpty()) {
+            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + ciudad);
+        }
+
+        GeocodingResponse.Resultado resultado = geo.getResults().get(0);
+        return resultado;
+
+    }
+    public GeocodingResponse.Resultado subConsultaPorCiudadYPais(String ciudad, String pais){
+        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, ciudad, pais);
+
+        if (geo == null || geo.getResults() == null || geo.getResults().isEmpty()) {
+            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + ciudad);
+        }
+
+        GeocodingResponse.Resultado resultado = geo.getResults().get(0);
+        return resultado;
+    }
+
+
+    public GeocodingResponse.Resultado subConsultaPorCiudadProvinciaYPais(String ciudad, String provincia, String pais){
+        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, ciudad, provincia, pais);
+
+        if (geo == null || geo.getResults() == null || geo.getResults().isEmpty()) {
+            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + ciudad);
+        }
+
+        GeocodingResponse.Resultado resultado = geo.getResults().get(0);
+        return resultado;
+    }
+
+
+
+
+    public Clima consultarClima(String ciudad, String provincia, String codigoPais) {
+        //SEGUIR CONDICIONAL PARA VER QUÉ METODO EJECUTAR DEPENDIENDO DEL INPUT DE PARAMETROS
+        GeocodingResponse.Resultado resultado;
+        if(provincia==null && codigoPais!=null ){
+            resultado= subConsultaPorCiudadYPais(ciudad, codigoPais);
+        } else if (provincia !=null && codigoPais==null) {
+            resultado= subConsultaPorCiudadYprovincia(ciudad, provincia);
+        } else if (provincia==null && codigoPais==null) {
+            resultado= subConsultaClimaPorCiudad(ciudad);
+        } else{
+            resultado= subConsultaPorCiudadProvinciaYPais(ciudad, provincia, codigoPais);
+        }
+
+
+
         ForecastResponse forecast = restTemplate.getForObject(FORECAST_URL, ForecastResponse.class, resultado.getLatitude(), resultado.getLongitude());
 
         if (forecast == null || forecast.getCurrent() == null) {
-            throw new RuntimeException("No se pudo obtener el clima para: " + nombreCiudad);
+            throw new RuntimeException("No se pudo obtener el clima para: " + ciudad);
         }
 
         // Paso 3: armar y guardar
         Clima clima = new Clima(
                 resultado.getName(),
+                resultado.getAdmin1(),
+                resultado.getCountry(),
                 resultado.getLatitude(),
                 resultado.getLongitude(),
                 forecast.getCurrent().getTemperatura(),
