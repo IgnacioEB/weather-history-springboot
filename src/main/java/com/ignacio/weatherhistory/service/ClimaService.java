@@ -11,14 +11,22 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class ClimaService {
 
     private final RestTemplate restTemplate;
     private final ClimaRepository climaRepository;
-
-    private static final String GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search?name={ciudad}&count=1";
+    //GEOCODING URLS CON DIFERENTES CON DIFERENTE CANTIDAD DE PLACEHOLDERS
+    private static final String URL_SOLO_CIUDAD =
+            "https://geocoding-api.open-meteo.com/v1/search?name={ciudad}&count=1";
+    private static final String URL_CIUDAD_PROVINCIA =
+            "https://geocoding-api.open-meteo.com/v1/search?name={ciudad},{provincia}&count=1";
+    private static final String URL_CIUDAD_PAIS =
+            "https://geocoding-api.open-meteo.com/v1/search?name={ciudad}&countryCode={pais}&count=1";
+    private static final String URL_CIUDAD_PROVINCIA_PAIS =
+            "https://geocoding-api.open-meteo.com/v1/search?name={ciudad},{provincia}&countryCode={pais}&count=1";
     private static final String FORECAST_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,wind_direction_10m,apparent_temperature,cloud_cover";
 
     public ClimaService(RestTemplate restTemplate, ClimaRepository climaRepository) {
@@ -26,25 +34,44 @@ public class ClimaService {
         this.climaRepository = climaRepository;
     }
 
-    public Clima consultarClima(String nombreCiudad) {
-        // Paso 1: geocoding — nombre de ciudad → coordenadas
-        GeocodingResponse geo = restTemplate.getForObject(GEOCODING_URL, GeocodingResponse.class, nombreCiudad);
+    private GeocodingResponse.Resultado consultarCoordenadas(String url, Object... params){
+        GeocodingResponse geo= restTemplate.getForObject(url, GeocodingResponse.class, params);
+        if(geo==null || geo.getResults()==null||geo.getResults().isEmpty()){
+            throw new CiudadNoEncontradaException("No se encontro la ciudad "+ params[0]+ ".");
+        }
+        return geo.getResults().get(0);
+    }
 
-        if (geo == null || geo.getResults() == null || geo.getResults().isEmpty()) {
-            throw new CiudadNoEncontradaException("No se encontró la ciudad: " + nombreCiudad);
+    public String obtenerNombrePais(String codigoPais){
+        Locale locale= new Locale("",codigoPais);
+        return locale.getDisplayCountry(Locale.forLanguageTag("es"));
+    }
+
+
+    public Clima consultarClima(String ciudad, String provincia, String codigoPais) {
+        //SEGUIR CONDICIONAL PARA VER QUÉ METODO EJECUTAR DEPENDIENDO DEL INPUT DE PARAMETROS
+        GeocodingResponse.Resultado resultado;
+        if(provincia==null && codigoPais!=null ){
+            resultado= consultarCoordenadas(URL_CIUDAD_PAIS,ciudad, codigoPais);
+        } else if (provincia !=null && codigoPais==null) {
+            resultado= consultarCoordenadas(URL_CIUDAD_PROVINCIA,ciudad, provincia);
+        } else if (provincia==null && codigoPais==null) {
+            resultado= consultarCoordenadas(URL_SOLO_CIUDAD,ciudad);
+        } else{
+            resultado= consultarCoordenadas(URL_CIUDAD_PROVINCIA_PAIS,ciudad, provincia, codigoPais);
         }
 
-        GeocodingResponse.Resultado resultado = geo.getResults().get(0);
-        // Paso 2: forecast — coordenadas → clima actual
         ForecastResponse forecast = restTemplate.getForObject(FORECAST_URL, ForecastResponse.class, resultado.getLatitude(), resultado.getLongitude());
 
         if (forecast == null || forecast.getCurrent() == null) {
-            throw new RuntimeException("No se pudo obtener el clima para: " + nombreCiudad);
+            throw new RuntimeException("No se pudo obtener el clima para: " + ciudad);
         }
 
         // Paso 3: armar y guardar
         Clima clima = new Clima(
                 resultado.getName(),
+                resultado.getAdmin1(),
+                resultado.getCountry(),
                 resultado.getLatitude(),
                 resultado.getLongitude(),
                 forecast.getCurrent().getTemperatura(),

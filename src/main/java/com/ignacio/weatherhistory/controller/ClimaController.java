@@ -20,8 +20,8 @@ public class ClimaController {
     }
 
     @PostMapping("/consultar")
-    public ResponseEntity<Clima> consultar(@RequestParam String ciudad) {
-        Clima clima = climaService.consultarClima(ciudad);
+    public ResponseEntity<Clima> consultar(@RequestParam String ciudad, @RequestParam(required = false) String provincia,@RequestParam(required = false)String codigoPais ) {
+        Clima clima = climaService.consultarClima(ciudad,provincia,codigoPais);
         return ResponseEntity.status(HttpStatus.CREATED).body(clima);
     }
 

@@ -7,13 +7,15 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name= "clima")
+@Table(name= "climas")
 public class Clima {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String ciudad;
+    private String provincia;
+    private String pais;
     private Double latitud;
     private Double longitud;
     private Double temperatura;
@@ -24,8 +26,10 @@ public class Clima {
     private Double sensacionTermica;
     private int coberturaNubes;
 
-    public Clima(String ciudad, Double latitud, Double longitud, Double temperatura, Double velocidadViento, Integer humedad, String direccionViento, Double sensacionTermica, Integer coberturaNubes){
+    public Clima(String ciudad, String provincia, String pais, Double latitud, Double longitud, Double temperatura, Double velocidadViento, Integer humedad, String direccionViento, Double sensacionTermica, Integer coberturaNubes){
         this.ciudad= ciudad;
+        this.provincia=provincia;
+        this.pais=pais; 
         this.latitud= latitud;
         this.longitud=longitud;
         this.temperatura=temperatura;
@@ -49,6 +53,8 @@ public class Clima {
     public String getCiudad() {
         return ciudad;
     }
+
+
 
     public Double getLatitud() {
         return latitud;
@@ -85,5 +91,14 @@ public class Clima {
 
     public int getCoberturaNubes() {
         return coberturaNubes;
+    }
+
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public String getPais() {
+        return pais;
     }
 }
