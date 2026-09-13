@@ -42,13 +42,33 @@ public class ClimaService {
         return geo.getResults().get(0);
     }
 
-    public String obtenerNombrePais(String codigoPais){
+    private String obtenerNombrePais(String codigoPais){
         Locale locale= new Locale("",codigoPais);
         return locale.getDisplayCountry(Locale.forLanguageTag("es"));
     }
+    private String obtenerCodigoPais(String nombrePais) {
+        for (String isoCode : Locale.getISOCountries()) {
+            Locale locale = new Locale("", isoCode);
+            String nombreEnEspanol = locale.getDisplayCountry(Locale.forLanguageTag("es"));
+            if (nombreEnEspanol.equalsIgnoreCase(nombrePais)) {
+                return isoCode;
+            }
+        }
+        return null; // no se encontró
+    }
 
 
-    public Clima consultarClima(String ciudad, String provincia, String codigoPais) {
+    public Clima consultarClima(String ciudad, String provincia, String nombrePais) {
+        String codigoPais;
+        if(nombrePais==null){
+            codigoPais=null;
+        }else{
+            codigoPais= obtenerCodigoPais(nombrePais);
+            if(codigoPais==null){
+                throw new IllegalArgumentException("Pais no reconocido: "+nombrePais);
+            }
+        }
+
         //SEGUIR CONDICIONAL PARA VER QUÉ METODO EJECUTAR DEPENDIENDO DEL INPUT DE PARAMETROS
         GeocodingResponse.Resultado resultado;
         if(provincia==null && codigoPais!=null ){
