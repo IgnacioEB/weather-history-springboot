@@ -2,7 +2,9 @@ package com.ignacio.weatherhistory.service;
 
 import com.ignacio.weatherhistory.dto.ForecastResponse;
 import com.ignacio.weatherhistory.dto.GeocodingResponse;
-import com.ignacio.weatherhistory.exception.CiudadNoEncontradaException;
+import com.ignacio.weatherhistory.exception.CiudadNotFoundException;
+import com.ignacio.weatherhistory.exception.ClimaNotAvailableException;
+import com.ignacio.weatherhistory.exception.PaisNotFoundException;
 import com.ignacio.weatherhistory.model.Clima;
 import com.ignacio.weatherhistory.repository.ClimaRepository;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ public class ClimaService {
     private GeocodingResponse.Resultado consultarCoordenadas(String url, Object... params){
         GeocodingResponse geo= restTemplate.getForObject(url, GeocodingResponse.class, params);
         if(geo==null || geo.getResults()==null||geo.getResults().isEmpty()){
-            throw new CiudadNoEncontradaException("No se encontro la ciudad "+ params[0]+ ".");
+            throw new CiudadNotFoundException("No se encontro la ciudad "+ params[0]+ ".");
         }
         return geo.getResults().get(0);
     }
@@ -65,7 +67,7 @@ public class ClimaService {
         }else{
             codigoPais= obtenerCodigoPais(nombrePais);
             if(codigoPais==null){
-                throw new IllegalArgumentException("Pais no reconocido: "+nombrePais);
+                throw new PaisNotFoundException("Pais no reconocido: "+nombrePais);
             }
         }
 
@@ -84,7 +86,7 @@ public class ClimaService {
         ForecastResponse forecast = restTemplate.getForObject(FORECAST_URL, ForecastResponse.class, resultado.getLatitude(), resultado.getLongitude());
 
         if (forecast == null || forecast.getCurrent() == null) {
-            throw new RuntimeException("No se pudo obtener el clima para: " + ciudad);
+            throw new ClimaNotAvailableException("No se pudo obtener el clima para: " + ciudad);
         }
 
         // Paso 3: armar y guardar
@@ -114,7 +116,7 @@ public class ClimaService {
         LocalDateTime desde= LocalDateTime.now().minusDays(dias);
         Double promedio= climaRepository.ObtenerTemperaturaPromedio(ciudad, desde);
         if(promedio==null){
-            throw new CiudadNoEncontradaException("No hay datos de "+ciudad+" en los ultimos "+ dias+ "dias");
+            throw new CiudadNotFoundException("No hay datos de "+ciudad+" en los ultimos "+ dias+ "dias");
         }
         return promedio;
     }
@@ -129,10 +131,10 @@ public class ClimaService {
         }
         if(resultado==null){
             if(ciudad==null){
-                throw new CiudadNoEncontradaException("Todavia no hay datos de ninguna ciudad.");
+                throw new CiudadNotFoundException("Todavia no hay datos de ninguna ciudad.");
             }
             else{
-                throw new CiudadNoEncontradaException("No hay datos de la ciudad "+ciudad+ ".");
+                throw new CiudadNotFoundException("No hay datos de la ciudad "+ciudad+ ".");
             }
         }
         return resultado;
@@ -142,7 +144,7 @@ public class ClimaService {
         Clima resultado=(ciudad == null ? climaRepository.findTopByOrderByTemperaturaAsc() : climaRepository.findTopByCiudadOrderByTemperaturaAsc(ciudad));
         if(resultado==null){
             String message=(ciudad == null ? "Todavia no hay datos de ninguna ciudad." : "No hay datos de la ciudad"+ ciudad );
-            throw new CiudadNoEncontradaException(message);
+            throw new CiudadNotFoundException(message);
         }
         return resultado;
     }
