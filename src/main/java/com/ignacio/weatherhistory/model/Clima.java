@@ -24,7 +24,7 @@ public class Clima {
     private Integer humedad;
     private String direccionViento;
     private Double sensacionTermica;
-    private int coberturaNubes;
+    private Integer coberturaNubes;
 
     public Clima(String ciudad, String provincia, String pais, Double latitud, Double longitud, Double temperatura, Double velocidadViento, Integer humedad, String direccionViento, Double sensacionTermica, Integer coberturaNubes){
         this.ciudad= ciudad;

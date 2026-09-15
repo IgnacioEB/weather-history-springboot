@@ -46,7 +46,7 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.climaMenorTemperatura(ciudad));
     }
 
-    @GetMapping("ciudades_registradas")
+    @GetMapping("/ciudades_registradas")
     public ResponseEntity<HashSet<String>> ciudades(){
         return ResponseEntity.ok(climaService.obtenerCiudades());
     }

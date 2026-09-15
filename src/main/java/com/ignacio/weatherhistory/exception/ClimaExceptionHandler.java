@@ -23,7 +23,7 @@ public class ClimaExceptionHandler {
     @ExceptionHandler(ClimaNotAvailableException.class)
     public ResponseEntity<ErrorResponse> manejarClimaNoDisponible(ClimaNotAvailableException e){
         return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                .body((new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), "Not available")));
+                .body((new ErrorResponse(e.getMessage(), HttpStatus.BAD_GATEWAY.value(), "Not available")));
     }
 
 }
