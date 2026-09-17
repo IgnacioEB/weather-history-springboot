@@ -17,4 +17,9 @@ services:
       POSTGRES_USER: weatherhistory_user
       POSTGRES_PASSWORD: weatherhistory_pass
     ports:
-      - 5432:5432
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
